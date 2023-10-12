@@ -6,7 +6,7 @@ import { Toaster } from "react-hot-toast";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Moonquake",
+  title: "Lunar Atlas",
   description: 'Submission for "Make a Moonquake Map 2.0" for 2023',
 };
 

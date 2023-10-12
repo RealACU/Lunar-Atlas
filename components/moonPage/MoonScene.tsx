@@ -16,7 +16,7 @@ const MoonScene = () => {
   const controls = useControls();
   const [showCrosshair, setShowCrosshair] = useState(false);
   const moonRotation = useRef<[number, number]>([0, 0]);
-  const isDragging = useRef(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const data = useMemo(() => {
     return new Map(Object.entries(moonquakeData));
@@ -67,11 +67,16 @@ const MoonScene = () => {
                 moonRotation.current[0] = Math.PI / 2 - lat_radians;
                 moonRotation.current[1] = -lon_radians;
 
+                let intervalId: any;
+
+                const returnTo = controls.naturalRotationSpeed;
                 controls.setNaturalRotationSpeed(0);
                 setShowCrosshair(true);
 
-                setInterval(() => {
+                intervalId = setInterval(() => {
                   setShowCrosshair(false);
+                  controls.setNaturalRotationSpeed(returnTo);
+                  clearInterval(intervalId);
                 }, 800);
 
                 toast(
@@ -113,7 +118,6 @@ const MoonScene = () => {
   }, [controls, data]);
 
   const handleDrag = (e: MouseEvent) => {
-    isDragging.current = true;
     const moonRotationY = (moonRotation.current[1] + e.movementY * 0.01) % 360;
     const moonRotationX =
       (moonRotation.current[0] +
@@ -124,16 +128,15 @@ const MoonScene = () => {
     moonRotation.current[0] = moonRotationX;
   };
 
-  // Register mouse event listeners
-  const addMouseListeners = () => {
-    window.addEventListener("mousemove", handleDrag);
-  };
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener("mousemove", handleDrag);
+    }
 
-  // Unregister mouse event listeners
-  const removeMouseListeners = () => {
-    window.removeEventListener("mousemove", handleDrag);
-    isDragging.current = false;
-  };
+    return () => {
+      document.removeEventListener("mousemove", handleDrag);
+    };
+  }, [isDragging]);
 
   return (
     <div className="h-2/3 sm:h-full relative">
@@ -148,8 +151,8 @@ const MoonScene = () => {
       />
       <Canvas
         className="canvas"
-        onPointerDown={addMouseListeners}
-        onPointerUp={removeMouseListeners}
+        onPointerDown={() => setIsDragging(true)}
+        onPointerUp={() => setIsDragging(false)}
       >
         <ambientLight intensity={controls.ambientLightIntensity} />
         <pointLight
@@ -166,7 +169,7 @@ export default MoonScene;
 
 interface MoonProps {
   moonRotation: MutableRefObject<[number, number]>;
-  isDragging: MutableRefObject<boolean>;
+  isDragging: boolean;
 }
 
 const Moon: React.FC<MoonProps> = ({ moonRotation, isDragging }) => {
@@ -201,10 +204,10 @@ const Moon: React.FC<MoonProps> = ({ moonRotation, isDragging }) => {
     if (meshRef.current) {
       meshRef.current.rotation.x = moonRotation.current[1];
 
-      if (!isDragging.current) {
-        moonRotation.current[0] += controls.naturalRotationSpeed;
+      if (isDragging) {
         meshRef.current.rotation.y = moonRotation.current[0];
       } else {
+        moonRotation.current[0] += controls.naturalRotationSpeed;
         meshRef.current.rotation.y = moonRotation.current[0];
       }
     }
