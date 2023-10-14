@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, MutableRefObject, useMemo, useState } from "react";
+import { TextureLoader, ClampToEdgeWrapping, Group } from "three";
+import { degToRad } from "three/src/math/MathUtils.js";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Sphere, Cylinder } from "@react-three/drei";
-import { TextureLoader, ClampToEdgeWrapping, Group } from "three";
 import useControls from "@/hooks/useControls";
 import { toast } from "react-hot-toast";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
@@ -15,8 +16,8 @@ import Image from "next/image";
 const MoonScene = () => {
   const controls = useControls();
   const [showCrosshair, setShowCrosshair] = useState(false);
-  const moonRotation = useRef<[number, number]>([0, 0]);
   const [isDragging, setIsDragging] = useState(false);
+  const moonRotation = useRef<[number, number]>([0, 0]);
 
   const data = useMemo(() => {
     return new Map(Object.entries(moonquakeData));
@@ -60,12 +61,11 @@ const MoonScene = () => {
           <AlertDescription className="flex gap-2">
             <Button
               onClick={() => {
-                const lat_radians = (parseFloat(info.latitude) * Math.PI) / 180;
-                const lon_radians =
-                  (parseFloat(info.longitude) * Math.PI) / 180;
+                const latitude_rad = (+info.latitude * Math.PI) / 180;
+                const longitude_rad = (+info.latitude * Math.PI) / 180;
 
-                moonRotation.current[0] = Math.PI / 2 - lat_radians;
-                moonRotation.current[1] = -lon_radians;
+                moonRotation.current[1] = latitude_rad;
+                moonRotation.current[0] = longitude_rad;
 
                 let intervalId: any;
 
@@ -84,7 +84,7 @@ const MoonScene = () => {
                     <Alert>
                       <AlertTitle>Info</AlertTitle>
                       <AlertDescription className="flex flex-col">
-                        <p>Date: {format(parseInt(date), "PPP")}</p>
+                        <p>Date: {format(+date, "PPP")}</p>
                         <p>Time (Hours/Minutes/Seconds): {info.time}</p>
                         <p>Latitude: {info.latitude}</p>
                         <p>Longitude: {info.longitude}</p>
@@ -139,7 +139,7 @@ const MoonScene = () => {
   }, [isDragging]);
 
   return (
-    <div className="h-2/3 sm:h-full relative">
+    <main className="h-2/3 sm:h-full relative">
       <Image
         src="/crosshair.png"
         alt="crosshair"
@@ -161,7 +161,7 @@ const MoonScene = () => {
         />
         <Moon moonRotation={moonRotation} isDragging={isDragging} />
       </Canvas>
-    </div>
+    </main>
   );
 };
 
@@ -233,13 +233,13 @@ const Moon: React.FC<MoonProps> = ({ moonRotation, isDragging }) => {
       </Sphere>
       {controls.showAxes && (
         <>
-          <Cylinder args={[0.01, 0.01, 5, 32]} rotation={[0, 0, 80.11]}>
+          <Cylinder args={[0.01, 0.01, 5, 32]} rotation={[0, 0, Math.PI / 2]}>
             <meshBasicMaterial attach="material" color="orange" />
           </Cylinder>
           <Cylinder args={[0.01, 0.01, 5, 32]}>
             <meshBasicMaterial attach="material" color="green" />
           </Cylinder>
-          <Cylinder args={[0.01, 0.01, 5, 32]} rotation={[80.11, 0, 0]}>
+          <Cylinder args={[0.01, 0.01, 5, 32]} rotation={[Math.PI / 2, 0, 0]}>
             <meshBasicMaterial attach="material" color="blue" />
           </Cylinder>
         </>
