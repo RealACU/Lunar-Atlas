@@ -124,6 +124,15 @@ const UI = () => {
         </TableRow>
 
         <TableRow>
+          <TableCell>Show Locations</TableCell>
+          <TableCell>
+            <Button onClick={controls.toggleLocations}>
+              {controls.showLocations ? "On" : "Off"}
+            </Button>
+          </TableCell>
+        </TableRow>
+
+        <TableRow>
           <TableCell className="flex flex-col gap-2">
             <div className="flex relative">
               <p>Direct Light Intensity</p>
@@ -174,7 +183,7 @@ const UI = () => {
         </TableRow>
 
         <TableRow>
-          <TableCell>Notifications</TableCell>
+          <TableCell>Show Notifications</TableCell>
           <TableCell>
             <Button onClick={controls.toggleNotifications}>
               {controls.showNotifications ? "On" : "Off"}

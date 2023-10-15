@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useRef, MutableRefObject, useMemo, useState } from "react";
-import { TextureLoader, ClampToEdgeWrapping, Group } from "three";
-import { degToRad } from "three/src/math/MathUtils.js";
+import { TextureLoader, ClampToEdgeWrapping, Group, Vector3 } from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Sphere, Cylinder } from "@react-three/drei";
+import { Sphere, Cylinder, Text } from "@react-three/drei";
 import useControls from "@/hooks/useControls";
 import { toast } from "react-hot-toast";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
@@ -12,12 +11,14 @@ import { moonquakeData } from "@/data/moonquakeData";
 import { Button } from "../ui/button";
 import { format } from "date-fns";
 import Image from "next/image";
+import { degToRad } from "three/src/math/MathUtils.js";
 
 const MoonScene = () => {
   const controls = useControls();
   const [showCrosshair, setShowCrosshair] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const moonRotation = useRef<[number, number]>([0, 0]);
+  const [quakeLocations, setQuakeLocations] = useState<any[]>([]);
 
   const data = useMemo(() => {
     return new Map(Object.entries(moonquakeData));
@@ -55,61 +56,69 @@ const MoonScene = () => {
     const info = data.get(date);
 
     if (info) {
-      toast((t) => (
-        <Alert>
-          <AlertTitle>{notificationText(info.type)}</AlertTitle>
-          <AlertDescription className="flex gap-2">
-            <Button
-              onClick={() => {
-                const latitude_rad = (+info.latitude * Math.PI) / 180;
-                const longitude_rad = (+info.latitude * Math.PI) / 180;
+      setQuakeLocations([
+        ...quakeLocations,
+        {
+          latitude: +info.latitude,
+          longitude: +info.longitude,
+          type: info.type || "Moonquake",
+        },
+      ]);
 
-                moonRotation.current[1] = latitude_rad;
-                moonRotation.current[0] = longitude_rad;
+      if (controls.showNotifications) {
+        toast((t) => (
+          <Alert>
+            <AlertTitle>{notificationText(info.type)}</AlertTitle>
+            <AlertDescription className="flex gap-2">
+              <Button
+                onClick={() => {
+                  moonRotation.current[1] = degToRad(+info.latitude);
+                  moonRotation.current[0] = degToRad(270 - +info.longitude);
 
-                let intervalId: any;
+                  let intervalId: any;
 
-                const returnTo = controls.naturalRotationSpeed;
-                controls.setNaturalRotationSpeed(0);
-                setShowCrosshair(true);
+                  const returnTo = controls.naturalRotationSpeed;
+                  controls.setNaturalRotationSpeed(0);
+                  setShowCrosshair(true);
 
-                intervalId = setInterval(() => {
-                  setShowCrosshair(false);
-                  controls.setNaturalRotationSpeed(returnTo);
-                  clearInterval(intervalId);
-                }, 800);
+                  intervalId = setInterval(() => {
+                    setShowCrosshair(false);
+                    controls.setNaturalRotationSpeed(returnTo);
+                    clearInterval(intervalId);
+                  }, 800);
 
-                toast(
-                  (t) => (
-                    <Alert>
-                      <AlertTitle>Info</AlertTitle>
-                      <AlertDescription className="flex flex-col">
-                        <p>Date: {format(+date, "PPP")}</p>
-                        <p>Time (Hours/Minutes/Seconds): {info.time}</p>
-                        <p>Latitude: {info.latitude}</p>
-                        <p>Longitude: {info.longitude}</p>
-                        <p>Magnitude: {info.magnitude || "N/A"}</p>
-                        <p>Type: {info.type ? "Landing" : "Moonquake"}</p>
-                        <Button onClick={() => toast.dismiss(t.id)}>
-                          Dismiss
-                        </Button>
-                      </AlertDescription>
-                    </Alert>
-                  ),
-                  { position: "bottom-center" }
-                );
+                  toast(
+                    (t) => (
+                      <Alert>
+                        <AlertTitle>Info</AlertTitle>
+                        <AlertDescription className="flex flex-col">
+                          <p>Date: {format(+date, "PPP")}</p>
+                          <p>Time (Hours/Minutes/Seconds): {info.time}</p>
+                          <p>Latitude: {info.latitude}</p>
+                          <p>Longitude: {info.longitude}</p>
+                          <p>Magnitude: {info.magnitude || "N/A"}</p>
+                          <p>Type: {info.type ? "Landing" : "Moonquake"}</p>
+                          <Button onClick={() => toast.dismiss(t.id)}>
+                            Dismiss
+                          </Button>
+                        </AlertDescription>
+                      </Alert>
+                    ),
+                    { position: "bottom-center" }
+                  );
 
-                toast.dismiss(t.id);
-              }}
-            >
-              View
-            </Button>
-            <Button onClick={() => toast.dismiss(t.id)} variant="secondary">
-              Dismiss
-            </Button>
-          </AlertDescription>
-        </Alert>
-      ));
+                  toast.dismiss(t.id);
+                }}
+              >
+                View
+              </Button>
+              <Button onClick={() => toast.dismiss(t.id)} variant="secondary">
+                Dismiss
+              </Button>
+            </AlertDescription>
+          </Alert>
+        ));
+      }
     }
 
     return () => {
@@ -159,7 +168,11 @@ const MoonScene = () => {
           position={[20, 0, 0]}
           intensity={controls.directLightIntensity}
         />
-        <Moon moonRotation={moonRotation} isDragging={isDragging} />
+        <Moon
+          moonRotation={moonRotation}
+          isDragging={isDragging}
+          quakeLocations={quakeLocations}
+        />
       </Canvas>
     </main>
   );
@@ -170,9 +183,14 @@ export default MoonScene;
 interface MoonProps {
   moonRotation: MutableRefObject<[number, number]>;
   isDragging: boolean;
+  quakeLocations: any[];
 }
 
-const Moon: React.FC<MoonProps> = ({ moonRotation, isDragging }) => {
+const Moon: React.FC<MoonProps> = ({
+  moonRotation,
+  isDragging,
+  quakeLocations,
+}) => {
   const controls = useControls();
   const textureLoader = useMemo(() => {
     return new TextureLoader();
@@ -244,6 +262,31 @@ const Moon: React.FC<MoonProps> = ({ moonRotation, isDragging }) => {
           </Cylinder>
         </>
       )}
+      {controls.showLocations &&
+        quakeLocations.map((location) => {
+          const position = new Vector3();
+          position.setFromSphericalCoords(
+            2,
+            degToRad(90 - location.latitude),
+            degToRad(90 + location.longitude)
+          );
+          const textPosition = new Vector3();
+          textPosition.setFromSphericalCoords(
+            2.2,
+            degToRad(90 - location.latitude),
+            degToRad(90 + location.longitude)
+          );
+          return (
+            <>
+              <Sphere args={[0.02, 2, 2]} position={position}>
+                <meshBasicMaterial attach="material" color="yellow" />
+              </Sphere>
+              <Text position={textPosition} fontSize={0.1}>
+                {location.type}
+              </Text>
+            </>
+          );
+        })}
     </group>
   );
 };

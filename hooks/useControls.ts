@@ -17,14 +17,8 @@ interface ControlsState {
   moonView: string;
   setMoonView: (value: string) => void;
 
-  showApolloLanders: boolean;
-  toggleApolloLanders: () => void;
-
-  showLandmarks: boolean;
-  toggleLandmarks: () => void;
-
-  showFaultLines: boolean;
-  toggleFaultLines: () => void;
+  showLocations: boolean;
+  toggleLocations: () => void;
 
   naturalRotationSpeed: number;
   setNaturalRotationSpeed: (value: number) => void;
@@ -41,9 +35,6 @@ interface ControlsState {
   // Private controls
   showInfo: boolean;
   toggleInfo: () => void;
-
-  showCrosshair: boolean;
-  toggleCrosshair: () => void;
 }
 
 const startDate = new Date(1969, 0, 309);
@@ -65,17 +56,9 @@ const useControls = create<ControlsState>((set) => ({
   moonView: "regular",
   setMoonView: (value) => set({ moonView: value }),
 
-  showApolloLanders: true,
-  toggleApolloLanders: () =>
-    set((state) => ({ showApolloLanders: !state.showApolloLanders })),
-
-  showLandmarks: true,
-  toggleLandmarks: () =>
-    set((state) => ({ showLandmarks: !state.showLandmarks })),
-
-  showFaultLines: false,
-  toggleFaultLines: () =>
-    set((state) => ({ showFaultLines: !state.showFaultLines })),
+  showLocations: true,
+  toggleLocations: () =>
+    set((state) => ({ showLocations: !state.showLocations })),
 
   naturalRotationSpeed: 0.002,
   setNaturalRotationSpeed: (value) => set({ naturalRotationSpeed: value }),
@@ -92,9 +75,6 @@ const useControls = create<ControlsState>((set) => ({
 
   showInfo: false,
   toggleInfo: () => set((state) => ({ showInfo: !state.showInfo })),
-
-  showCrosshair: false,
-  toggleCrosshair: () => set((state) => ({ showCrosshair: !state.showCrosshair })),
 }));
 
 export default useControls;
