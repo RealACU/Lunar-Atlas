@@ -3,7 +3,7 @@
 import { useEffect, useRef, MutableRefObject, useMemo, useState } from "react";
 import { TextureLoader, ClampToEdgeWrapping, Group, Vector3 } from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Sphere, Cylinder, Text } from "@react-three/drei";
+import { Sphere, Cylinder, Html } from "@react-three/drei";
 import useControls from "@/hooks/useControls";
 import { toast } from "react-hot-toast";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
@@ -272,18 +272,32 @@ const Moon: React.FC<MoonProps> = ({
           );
           const textPosition = new Vector3();
           textPosition.setFromSphericalCoords(
-            2.2,
-            degToRad(90 - location.latitude),
-            degToRad(90 + location.longitude)
+            2.05,
+            degToRad(
+              90 -
+                location.latitude -
+                (location.type === "14 LM" || location.type === "15 S-IVB"
+                  ? 3.8
+                  : 0) +
+                (location.type === "Moonquake" ? 2 : 0)
+            ),
+            degToRad(
+              90 +
+                location.longitude -
+                3 -
+                (location.type === "13 S-IVB" ? 3 : 0)
+            )
           );
           return (
             <>
               <Sphere args={[0.02, 2, 2]} position={position}>
                 <meshBasicMaterial attach="material" color="yellow" />
               </Sphere>
-              <Text position={textPosition} fontSize={0.1}>
-                {location.type}
-              </Text>
+              <Html position={textPosition} occlude>
+                <div className="text-white text-xs w-[5rem]">
+                  {location.type}
+                </div>
+              </Html>
             </>
           );
         })}
