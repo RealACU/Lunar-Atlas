@@ -59,8 +59,11 @@ const MoonScene = () => {
       setQuakeLocations([
         ...quakeLocations,
         {
+          date: format(+date, "PPP"),
+          time: info.time,
           latitude: +info.latitude,
           longitude: +info.longitude,
+          magnitude: info.magnitude || "N/A",
           type: info.type || "Moonquake",
         },
       ]);
@@ -90,7 +93,7 @@ const MoonScene = () => {
                   toast(
                     (t) => (
                       <Alert>
-                        <AlertTitle>Info</AlertTitle>
+                        <AlertTitle>{info.type} Info</AlertTitle>
                         <AlertDescription className="flex flex-col">
                           <p>Date: {format(+date, "PPP")}</p>
                           <p>Time (Hours/Minutes/Seconds): {info.time}</p>
@@ -315,7 +318,35 @@ const Moon: React.FC<MoonProps> = ({
                 <meshBasicMaterial attach="material" color="yellow" />
               </Sphere>
               <Html position={textPosition} occlude>
-                <div className="text-white text-xs w-[5rem] select-none">
+                <div
+                  onClick={() => {
+                    toast(
+                      (t) => (
+                        <Alert>
+                          <AlertTitle>{location.type} Info</AlertTitle>
+                          <AlertDescription className="flex flex-col">
+                            <p>Date: {location.date}</p>
+                            <p>Time (Hours/Minutes/Seconds): {location.time}</p>
+                            <p>Latitude: {location.latitude}</p>
+                            <p>Longitude: {location.longitude}</p>
+                            <p>Magnitude: {location.magnitude || "N/A"}</p>
+                            <p>
+                              Type:{" "}
+                              {location.type !== "Moonquake"
+                                ? "Landing"
+                                : location.type}
+                            </p>
+                            <Button onClick={() => toast.dismiss(t.id)}>
+                              Dismiss
+                            </Button>
+                          </AlertDescription>
+                        </Alert>
+                      ),
+                      { position: "bottom-center" }
+                    );
+                  }}
+                  className="text-white text-xs w-[5rem] select-none cursor-pointer"
+                >
                   {location.type}
                 </div>
               </Html>
