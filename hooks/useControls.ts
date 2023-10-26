@@ -60,13 +60,13 @@ const useControls = create<ControlsState>((set) => ({
   toggleLocations: () =>
     set((state) => ({ showLocations: !state.showLocations })),
 
-  naturalRotationSpeed: 0.001,
+  naturalRotationSpeed: 1,
   setNaturalRotationSpeed: (value) => set({ naturalRotationSpeed: value }),
 
-  ambientLightIntensity: 0.1,
+  ambientLightIntensity: 10,
   setAmbientLightIntensity: (value) => set({ ambientLightIntensity: value }),
 
-  directLightIntensity: 2000,
+  directLightIntensity: 20,
   setDirectLightIntensity: (value) => set({ directLightIntensity: value }),
 
   showNotifications: true,

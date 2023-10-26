@@ -174,10 +174,10 @@ const MoonScene = () => {
         onPointerDown={() => setIsDragging(true)}
         onPointerUp={() => setIsDragging(false)}
       >
-        <ambientLight intensity={controls.ambientLightIntensity} />
+        <ambientLight intensity={controls.ambientLightIntensity * 0.01} />
         <pointLight
           position={[40, 0, 0]}
-          intensity={controls.directLightIntensity}
+          intensity={controls.directLightIntensity * 100}
         />
         <Moon
           moonRotation={moonRotation}
@@ -246,7 +246,7 @@ const Moon: React.FC<MoonProps> = ({
       if (isDragging) {
         meshRef.current.rotation.y = moonRotation.current[0];
       } else {
-        moonRotation.current[0] += controls.naturalRotationSpeed;
+        moonRotation.current[0] += controls.naturalRotationSpeed * 0.001;
         meshRef.current.rotation.y = moonRotation.current[0];
       }
     }

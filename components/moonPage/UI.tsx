@@ -102,7 +102,7 @@ const UI = () => {
           <TableCell className="flex flex-col gap-2">
             <div className="flex relative">
               <p>Rotation Speed</p>
-              <p className="font-bold absolute -right-2">
+              <p className="font-bold absolute right-0">
                 {controls.naturalRotationSpeed}
               </p>
             </div>
@@ -111,13 +111,13 @@ const UI = () => {
                 controls.setNaturalRotationSpeed(value[0])
               }
               value={[controls.naturalRotationSpeed]}
-              max={0.004}
+              max={4}
               min={0}
-              step={0.001}
+              step={1}
             />
           </TableCell>
           <TableCell>
-            <Button onClick={() => controls.setNaturalRotationSpeed(0.001)}>
+            <Button onClick={() => controls.setNaturalRotationSpeed(1)}>
               Reset
             </Button>
           </TableCell>
@@ -136,7 +136,7 @@ const UI = () => {
           <TableCell className="flex flex-col gap-2">
             <div className="flex relative">
               <p>Direct Light Intensity</p>
-              <p className="font-bold absolute -right-2">
+              <p className="font-bold absolute right-0">
                 {controls.directLightIntensity}
               </p>
             </div>
@@ -145,13 +145,13 @@ const UI = () => {
                 controls.setDirectLightIntensity(value[0])
               }
               value={[controls.directLightIntensity]}
-              max={3000}
-              min={1000}
-              step={100}
+              max={30}
+              min={10}
+              step={1}
             />
           </TableCell>
           <TableCell>
-            <Button onClick={() => controls.setDirectLightIntensity(2000)}>
+            <Button onClick={() => controls.setDirectLightIntensity(20)}>
               Reset
             </Button>
           </TableCell>
@@ -161,7 +161,7 @@ const UI = () => {
           <TableCell className="flex flex-col gap-2">
             <div className="flex relative">
               <p>Ambient Light Intensity</p>
-              <p className="font-bold absolute -right-2">
+              <p className="font-bold absolute right-0">
                 {controls.ambientLightIntensity}
               </p>
             </div>
@@ -170,13 +170,13 @@ const UI = () => {
                 controls.setAmbientLightIntensity(value[0])
               }
               value={[controls.ambientLightIntensity]}
-              max={0.5}
-              min={0.1}
-              step={0.1}
+              max={50}
+              min={10}
+              step={5}
             />
           </TableCell>
           <TableCell>
-            <Button onClick={() => controls.setAmbientLightIntensity(0.1)}>
+            <Button onClick={() => controls.setAmbientLightIntensity(10)}>
               Reset
             </Button>
           </TableCell>
