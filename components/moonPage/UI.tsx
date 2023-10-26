@@ -117,7 +117,7 @@ const UI = () => {
             />
           </TableCell>
           <TableCell>
-            <Button onClick={() => controls.setNaturalRotationSpeed(0.002)}>
+            <Button onClick={() => controls.setNaturalRotationSpeed(0.001)}>
               Reset
             </Button>
           </TableCell>
@@ -145,13 +145,13 @@ const UI = () => {
                 controls.setDirectLightIntensity(value[0])
               }
               value={[controls.directLightIntensity]}
-              max={600}
-              min={300}
-              step={5}
+              max={3000}
+              min={1000}
+              step={100}
             />
           </TableCell>
           <TableCell>
-            <Button onClick={() => controls.setDirectLightIntensity(500)}>
+            <Button onClick={() => controls.setDirectLightIntensity(2000)}>
               Reset
             </Button>
           </TableCell>
@@ -176,7 +176,7 @@ const UI = () => {
             />
           </TableCell>
           <TableCell>
-            <Button onClick={() => controls.setAmbientLightIntensity(0.2)}>
+            <Button onClick={() => controls.setAmbientLightIntensity(0.1)}>
               Reset
             </Button>
           </TableCell>

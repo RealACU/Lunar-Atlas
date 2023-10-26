@@ -36,6 +36,10 @@ body,
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+.rainbow {
+  background: linear-gradient(180deg, red, orange, yellow, green, blue, indigo, violet);
+}
  
 @layer base {
   :root {

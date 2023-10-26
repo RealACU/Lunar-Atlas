@@ -126,15 +126,26 @@ const MoonScene = () => {
     };
   }, [controls, data]);
 
-  const handleDrag = (e: MouseEvent) => {
-    const moonRotationY = (moonRotation.current[1] + e.movementY * 0.01) % 360;
-    const moonRotationX =
-      (moonRotation.current[0] +
-        e.movementX * 0.01 * Math.sign(Math.cos(moonRotationY))) %
-      360;
+  const clampRotation = (rotation: number) => {
+    // Rotation is in radians
+    if (rotation < -1.5) {
+      return -1.5;
+    }
 
-    moonRotation.current[1] = moonRotationY;
-    moonRotation.current[0] = moonRotationX;
+    if (rotation > 1.5) {
+      return 1.5;
+    }
+
+    return rotation;
+  };
+
+  const handleDrag = (e: MouseEvent) => {
+    // Y-axis rotation
+    moonRotation.current[1] = clampRotation(
+      moonRotation.current[1] + e.movementY * 0.01
+    );
+    // X-axis rotation
+    moonRotation.current[0] += e.movementX * 0.01;
   };
 
   useEffect(() => {
@@ -165,7 +176,7 @@ const MoonScene = () => {
       >
         <ambientLight intensity={controls.ambientLightIntensity} />
         <pointLight
-          position={[20, 0, 0]}
+          position={[40, 0, 0]}
           intensity={controls.directLightIntensity}
         />
         <Moon
@@ -174,6 +185,16 @@ const MoonScene = () => {
           quakeLocations={quakeLocations}
         />
       </Canvas>
+      {controls.moonView === "displacement" && (
+        <div className="absolute bottom-6 right-4">
+          <div className="relative rainbow h-[6rem] w-6"></div>
+          <p className="absolute -top-3 right-8 text-white">+10786m</p>
+          <p className="absolute -bottom-3 right-8 text-white">-7314m</p>
+          <p className="absolute top-[2.2rem] right-10 text-white">
+            Displacement
+          </p>
+        </div>
+      )}
     </main>
   );
 };
@@ -294,7 +315,7 @@ const Moon: React.FC<MoonProps> = ({
                 <meshBasicMaterial attach="material" color="yellow" />
               </Sphere>
               <Html position={textPosition} occlude>
-                <div className="text-white text-xs w-[5rem]">
+                <div className="text-white text-xs w-[5rem] select-none">
                   {location.type}
                 </div>
               </Html>
