@@ -13,6 +13,32 @@ import { format } from "date-fns";
 import Image from "next/image";
 import { degToRad } from "three/src/math/MathUtils.js";
 
+// Utility functions
+const notificationText = (type: string | null | undefined) => {
+  // If there is a type in the dataset, format it
+  if (type) {
+    type = "The Apollo " + type;
+    type = type.replace("LM", "Lunar Module");
+    return type + " has landed!";
+  }
+
+  return "A moonquake has occured!";
+};
+
+const clampRotation = (rotation: number) => {
+  // Rotation is in radians
+  if (rotation < -1.5) {
+    return -1.5;
+  }
+
+  if (rotation > 1.5) {
+    return 1.5;
+  }
+
+  return rotation;
+};
+
+// Component starts
 const MoonScene = () => {
   const controls = useControls();
   const [showCrosshair, setShowCrosshair] = useState(false);
@@ -23,17 +49,6 @@ const MoonScene = () => {
   const data = useMemo(() => {
     return new Map(Object.entries(moonquakeData));
   }, []);
-
-  const notificationText = (type: string | null | undefined) => {
-    // If there is a type in the dataset, format it
-    if (type) {
-      type = "The Apollo " + type;
-      type = type.replace("LM", "Lunar Module");
-      return type + " has landed!";
-    }
-
-    return "A moonquake has occured!";
-  };
 
   useEffect(() => {
     let intervalId: any;
@@ -56,7 +71,7 @@ const MoonScene = () => {
     const info = data.get(date);
 
     if (info) {
-      setQuakeLocations([
+      setQuakeLocations((quakeLocations) => [
         ...quakeLocations,
         {
           date: format(+date, "PPP"),
@@ -128,19 +143,6 @@ const MoonScene = () => {
       clearInterval(intervalId);
     };
   }, [controls, data]);
-
-  const clampRotation = (rotation: number) => {
-    // Rotation is in radians
-    if (rotation < -1.5) {
-      return -1.5;
-    }
-
-    if (rotation > 1.5) {
-      return 1.5;
-    }
-
-    return rotation;
-  };
 
   const handleDrag = (e: MouseEvent) => {
     // Y-axis rotation
@@ -255,8 +257,8 @@ const Moon: React.FC<MoonProps> = ({
     }
   });
 
-  const getTexture = (value: string) => {
-    switch (value) {
+  const texture = useMemo(() => {
+    switch (controls.moonView) {
       case "regular":
         return moonTexture;
       case "latlon":
@@ -266,12 +268,18 @@ const Moon: React.FC<MoonProps> = ({
       case "mineral":
         return moonMineralTexture;
     }
-  };
+  }, [
+    controls.moonView,
+    moonTexture,
+    moonLatLonTexture,
+    moonDisplacementTexture,
+    moonMineralTexture,
+  ]);
 
   return (
     <group ref={meshRef}>
       <Sphere args={[2, 40, 40]}>
-        <meshPhongMaterial map={getTexture(controls.moonView)} />
+        <meshPhongMaterial map={texture} />
       </Sphere>
       {controls.showAxes && (
         <>
@@ -314,10 +322,14 @@ const Moon: React.FC<MoonProps> = ({
           );
           return (
             <>
-              <Sphere args={[0.02, 2, 2]} position={position}>
+              <Sphere
+                key={location.date}
+                args={[0.02, 2, 2]}
+                position={position}
+              >
                 <meshBasicMaterial attach="material" color="yellow" />
               </Sphere>
-              <Html position={textPosition} occlude>
+              <Html key={location.date} position={textPosition} occlude>
                 <div
                   onClick={() => {
                     toast(

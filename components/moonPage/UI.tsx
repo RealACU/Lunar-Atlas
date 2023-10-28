@@ -102,7 +102,7 @@ const UI = () => {
           <TableCell className="flex flex-col gap-2">
             <div className="flex relative">
               <p>Rotation Speed</p>
-              <p className="font-bold absolute right-0">
+              <p className="font-bold absolute -right-2 sm:right-0">
                 {controls.naturalRotationSpeed}
               </p>
             </div>
@@ -136,7 +136,7 @@ const UI = () => {
           <TableCell className="flex flex-col gap-2">
             <div className="flex relative">
               <p>Direct Light Intensity</p>
-              <p className="font-bold absolute right-0">
+              <p className="font-bold absolute -right-2 sm:right-0">
                 {controls.directLightIntensity}
               </p>
             </div>
@@ -161,7 +161,7 @@ const UI = () => {
           <TableCell className="flex flex-col gap-2">
             <div className="flex relative">
               <p>Ambient Light Intensity</p>
-              <p className="font-bold absolute right-0">
+              <p className="font-bold absolute -right-2 sm:right-0">
                 {controls.ambientLightIntensity}
               </p>
             </div>
