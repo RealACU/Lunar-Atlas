@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 import { Slider } from "../ui/slider";
 import { ScrollArea } from "../ui/scroll-area";
 import DatePicker from "./DatePicker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlignJustify, Pause, Play, FastForward } from "lucide-react";
 import {
   Select,
@@ -23,6 +23,19 @@ const UI = () => {
   const controls = useControls();
   const [isOpen, setIsOpen] = useState(true);
   const dates = Object.keys(moonquakeData);
+  const [disabled, setDisabled] = useState(false);
+
+  useEffect(() => {
+    let intervalId: any;
+
+    if (disabled) {
+      intervalId = setInterval(() => setDisabled(false), 2500);
+    }
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [disabled]);
 
   const controlPanel = (
     <Table>
@@ -40,6 +53,7 @@ const UI = () => {
           <TableCell>
             <DatePicker />
             <Button
+              disabled={disabled}
               className="mt-2"
               variant="secondary"
               onClick={() => {
@@ -49,6 +63,7 @@ const UI = () => {
                   }
                 }
 
+                setDisabled(true);
                 return toast.error("There are no more events", {
                   position: "top-center",
                 });
@@ -102,7 +117,7 @@ const UI = () => {
           <TableCell className="flex flex-col gap-2">
             <div className="flex relative">
               <p>Rotation Speed</p>
-              <p className="font-bold absolute -right-2 sm:right-0">
+              <p className="font-bold absolute -right-2">
                 {controls.naturalRotationSpeed}
               </p>
             </div>
@@ -136,7 +151,7 @@ const UI = () => {
           <TableCell className="flex flex-col gap-2">
             <div className="flex relative">
               <p>Direct Light Intensity</p>
-              <p className="font-bold absolute -right-2 sm:right-0">
+              <p className="font-bold absolute -right-2">
                 {controls.directLightIntensity}
               </p>
             </div>
@@ -161,7 +176,7 @@ const UI = () => {
           <TableCell className="flex flex-col gap-2">
             <div className="flex relative">
               <p>Ambient Light Intensity</p>
-              <p className="font-bold absolute -right-2 sm:right-0">
+              <p className="font-bold absolute -right-2">
                 {controls.ambientLightIntensity}
               </p>
             </div>

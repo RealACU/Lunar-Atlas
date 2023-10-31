@@ -36,7 +36,7 @@ const notificationText = (type: string | null | undefined) => {
   if (type) {
     type = "The Apollo " + type;
     type = type.replace("LM", "Lunar Module");
-    return type + " has landed!";
+    return type + "\nhas landed!";
   }
 
   return "A moonquake has occured!";
@@ -207,7 +207,6 @@ const MoonScene = () => {
           moonRotation={moonRotation}
           isDragging={isDragging}
           quakeLocations={quakeLocations}
-          setQuakeLocations={setQuakeLocations}
         />
       </Canvas>
       {controls.moonView === "displacement" && (
@@ -230,14 +229,12 @@ interface MoonProps {
   moonRotation: MutableRefObject<[number, number]>;
   isDragging: boolean;
   quakeLocations: any[];
-  setQuakeLocations: Dispatch<SetStateAction<any[]>>;
 }
 
 const Moon: React.FC<MoonProps> = ({
   moonRotation,
   isDragging,
   quakeLocations,
-  setQuakeLocations,
 }) => {
   const controls = useControls();
   const textureLoader = useMemo(() => {
@@ -363,7 +360,12 @@ const Moon: React.FC<MoonProps> = ({
                 longitude={location.longitude}
                 magnitude={location.magnitude}
               />
-              <Html key={location.date} position={textPosition} occlude>
+              <Html
+                key={location.date}
+                position={textPosition}
+                occlude
+                zIndexRange={[0]}
+              >
                 <div
                   onClick={() => {
                     if (controls.showNotifications) {
