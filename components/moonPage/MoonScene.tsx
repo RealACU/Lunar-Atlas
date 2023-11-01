@@ -88,10 +88,11 @@ const MoonScene = () => {
     const info = data.get(date);
 
     if (info) {
+      const formattedDate = format(+date, "PPP");
       setQuakeLocations((quakeLocations) => [
         ...quakeLocations,
         {
-          date: format(+date, "PPP"),
+          date: formattedDate,
           time: info.time,
           latitude: +info.latitude,
           longitude: +info.longitude,
@@ -128,19 +129,22 @@ const MoonScene = () => {
                         <Alert>
                           <AlertTitle>{info.type} Info</AlertTitle>
                           <AlertDescription className="flex flex-col">
-                            <p>Date: {format(+date, "PPP")}</p>
+                            <p>Date: {formattedDate}</p>
                             <p>Time (Hours/Minutes/Seconds): {info.time}</p>
                             <p>Latitude: {info.latitude}</p>
                             <p>Longitude: {info.longitude}</p>
                             <p>Magnitude: {info.magnitude || "N/A"}</p>
                             <p>Type: {info.type ? "Landing" : "Moonquake"}</p>
-                            <Button onClick={() => toast.dismiss(t.id)}>
+                            <Button
+                              variant="secondary"
+                              onClick={() => toast.dismiss(t.id)}
+                            >
                               Dismiss
                             </Button>
                           </AlertDescription>
                         </Alert>
                       ),
-                      { position: "bottom-center" }
+                      { position: "bottom-right", id: formattedDate }
                     );
                   }
 
@@ -387,13 +391,16 @@ const Moon: React.FC<MoonProps> = ({
                                   ? "Landing"
                                   : location.type}
                               </p>
-                              <Button onClick={() => toast.dismiss(t.id)}>
+                              <Button
+                                variant="secondary"
+                                onClick={() => toast.dismiss(t.id)}
+                              >
                                 Dismiss
                               </Button>
                             </AlertDescription>
                           </Alert>
                         ),
-                        { position: "bottom-center" }
+                        { position: "bottom-right", id: location.date }
                       );
                     }
 
