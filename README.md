@@ -12,6 +12,8 @@ Next.js / Three.js part made by Danny
 
 Unreal Engine 5 part made by Shivansh
 
+It was a super fun but also frustrating experience. I must say, competing in a NASA competition as a first hackathon is a little crazy. Now we are moving on to other competitions with our new experiences and skills.
+
 ---
 
 Key Lessons Learned:
