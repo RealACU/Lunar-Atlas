@@ -210,7 +210,7 @@ const UI = () => {
           <TableCell>
             <Button
               onClick={() =>
-                window.open("https://shivhax.itch.io/moonquake?secret=AOhUGNVpDlEMK1LUHTFxGb0NAw", "_blank")
+                window.open("https://shivhax.itch.io/moonquake-simulation", "_blank")
               }
             >
               View in first person!
