@@ -209,6 +209,19 @@ const UI = () => {
         <TableRow>
           <TableCell>
             <Button
+              variant="secondary"
+              onClick={() =>
+                window.open(
+                  "https://www.youtube.com/watch?v=PfcuWrzfXZQ",
+                  "_blank"
+                )
+              }
+            >
+              Watch this tutorial
+            </Button>
+          </TableCell>
+          <TableCell>
+            <Button
               onClick={() =>
                 window.open("https://shivhax.itch.io/moonquake-simulation", "_blank")
               }
